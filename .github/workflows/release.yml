@@ -1,9 +1,9 @@
-name: CI
+name: NPM Package
 
 on:
   push:
-    branches:
-      - master
+    tags:
+      - "*"
 
 jobs:
   build:
@@ -47,3 +47,9 @@ jobs:
         run: npm run build
         env:
           CI: true
+
+      - name: Release to NPM
+        run: npm publish
+        env:
+          CI: true
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
