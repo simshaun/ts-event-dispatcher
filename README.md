@@ -1,18 +1,22 @@
+# ts-event-dispatcher
+
+![CI](https://github.com/IndelibleVI/ts-event-dispatcher/workflows/CI/badge.svg?branch=master)
+
 This is a simple library that allows your application components to communicate with each other by dispatching events and listening to them.
 
-# Installation
+## Installation
 
 ```
 npm install ivi-ts-event-dispatcher
 ```
 
-# Usage
+## Usage
 
 Events are identified by a unique name of your choosing. Any number of listeners might be listening for them.
 When an event is dispatched, data about that specific event is passed to listeners so that they have the information they need.
 
 
-## The EventDispatcher
+### The EventDispatcher
 
 Generally, you would create a single dispatcher and share it throughout your application. It maintains a registry of listeners.
 When an event is dispatched via the dispatcher, it notifies all listeners registered with that event.
@@ -23,7 +27,7 @@ import { EventDispatcher } from 'ivi-ts-event-dispatcher';
 const dispatcher = new EventDispatcher();
 ```
 
-## Dispatching an Event
+### Dispatching an Event
 
 Suppose you want to trigger an event when a user signs up on your website.
 Your event name might be `user.created`. When dispatching the event, you'll pass a User object to the listeners.
@@ -33,7 +37,7 @@ const data = { user, timestamp: 12345 }; // contrived
 dispatcher.dispatch('user.created', data);
 ```
 
-## Event Listeners
+### Event Listeners
 
 Event listeners are simple, callable functions that you register with the event dispatcher.
 The EventDispatcher passes your app-specific event data and a special context object (more on that later) to listeners when
@@ -55,7 +59,7 @@ The `addListener()` method takes two or three arguments:
    is called. If two listeners have the same priority, they are executed in the order they were added to the dispatcher.
 
 
-## Stopping Event Propagation
+### Stopping Event Propagation
 
 Sometimes it may make sense for a listener to prevent the next listeners from being called. This can be accomplished with the
 special context object mentioned earlier. It's passed to event listeners as the second argument and can be used to stop event propagation.
@@ -75,7 +79,7 @@ const context = dispatcher.dispatch('user.created', data);
 console.log(context.isPropagationStopped);
 ```
 
-# Full Example
+## Full Example
 
 ```ts
 import { EventDispatcher, EventListener } from 'ivi-ts-event-dispatcher';
@@ -102,7 +106,7 @@ dispatcher.dispatch("user.created", { user });
 
 -----
 
-# TSDX Bootstrap
+## TSDX Bootstrap
 
 This project was bootstrapped with [TSDX](https://github.com/jaredpalmer/tsdx).
 
