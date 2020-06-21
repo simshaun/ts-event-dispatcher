@@ -1,14 +1,20 @@
 # ts-event-dispatcher
 
+![Version](https://img.shields.io/npm/v/@indelible-vi/ts-event-dispatcher)
 ![CI](https://github.com/IndelibleVI/ts-event-dispatcher/workflows/CI/badge.svg?branch=master)
+![Size](https://img.shields.io/bundlephobia/min/@indelible-vi/ts-event-dispatcher)
+![License](https://img.shields.io/github/license/indeliblevi/ts-event-dispatcher)
+[![Coverage](https://coveralls.io/repos/github/IndelibleVI/ts-event-dispatcher/badge.svg?branch=master)](https://coveralls.io/github/IndelibleVI/ts-event-dispatcher?branch=master)
 
 This is a simple library that allows your application components to communicate with each other by dispatching events and listening to them.
+
 
 ## Installation
 
 ```
-npm install ivi-ts-event-dispatcher
+npm i @indelible-vi/ts-event-dispatcher
 ```
+
 
 ## Usage
 
@@ -22,7 +28,7 @@ Generally, you would create a single dispatcher and share it throughout your app
 When an event is dispatched via the dispatcher, it notifies all listeners registered with that event.
 
 ```ts
-import { EventDispatcher } from 'ivi-ts-event-dispatcher';
+import { EventDispatcher } from '@indelible-vi/ts-event-dispatcher';
 
 const dispatcher = new EventDispatcher();
 ```
@@ -44,7 +50,7 @@ The EventDispatcher passes your app-specific event data and a special context ob
 their event is dispatched.
 
 ```ts
-import { EventListener } from 'ivi-ts-event-dispatcher';
+import { EventListener } from '@indelible-vi/ts-event-dispatcher';
 
 const listener: EventListener = (data) => {
   // ... do something ...
@@ -82,7 +88,7 @@ console.log(context.isPropagationStopped);
 ## Full Example
 
 ```ts
-import { EventDispatcher, EventListener } from 'ivi-ts-event-dispatcher';
+import { EventDispatcher, EventListener } from '@indelible-vi/ts-event-dispatcher';
 
 const dispatcher = new EventDispatcher();
 
