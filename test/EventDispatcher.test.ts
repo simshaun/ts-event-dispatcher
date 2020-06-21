@@ -22,9 +22,7 @@ describe('EventDispatcher', () => {
     const dispatcher = new EventDispatcher()
     const eventKey = 'fake_event'
 
-    const listener1 = jest.fn((data: any, context: EventDispatcherContext) =>
-      context.stopPropagation()
-    )
+    const listener1 = jest.fn((data: any, context: EventDispatcherContext) => context.stopPropagation())
     const listener2 = jest.fn()
     dispatcher.addListener(eventKey, listener1)
     dispatcher.addListener(eventKey, listener2)

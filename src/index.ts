@@ -65,7 +65,7 @@ export class EventDispatcher implements EventDispatcher {
         }
         return 0
       })
-      .map((t) => t[1])
+      .map(t => t[1])
   }
 
   private getListeners(eventKey: EventKey): EventListener[] {

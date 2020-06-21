@@ -20,4 +20,4 @@ module.exports = {
       tsConfig: 'tsconfig.test.json',
     },
   },
-};
+}
