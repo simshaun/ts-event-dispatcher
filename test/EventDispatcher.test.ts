@@ -80,6 +80,14 @@ describe('EventDispatcher', () => {
     const dispatcher = new EventDispatcher()
     dispatcher.dispatch('fake_event', {})
   })
+
+  test('it returns context', () => {
+    const dispatcher = new EventDispatcher()
+    const context = dispatcher.dispatch('fake_event', {})
+    expect(context).toBeObject()
+    expect(context).toHaveProperty('eventName')
+    expect(context.eventName).toBe('fake_event')
+  })
 })
 
 describe('EventDispatcherContext', () => {
