@@ -1,5 +1,5 @@
 {
-  "name": "ivi-ts-event-dispatcher",
+  "name": "@indelible-vi/ts-event-dispatcher",
   "description": "A simple JS event dispatcher implementing the mediator & observer patterns",
   "version": "1.0.0",
   "license": "MIT",
@@ -18,7 +18,7 @@
     "event emitter"
   ],
   "main": "dist/index.js",
-  "module": "dist/ivi-ts-event-dispatcher.esm.js",
+  "module": "dist/ts-event-dispatcher.esm.js",
   "typings": "dist/index.d.ts",
   "files": [
     "dist",
