@@ -1,10 +1,10 @@
 # ts-event-dispatcher
 
-![Version](https://img.shields.io/npm/v/@indelible-vi/ts-event-dispatcher)
-![CI](https://github.com/IndelibleVI/ts-event-dispatcher/workflows/CI/badge.svg?branch=master)
-![Size](https://img.shields.io/bundlephobia/min/@indelible-vi/ts-event-dispatcher)
-![License](https://img.shields.io/github/license/indeliblevi/ts-event-dispatcher)
-[![Coverage](https://coveralls.io/repos/github/IndelibleVI/ts-event-dispatcher/badge.svg?branch=master)](https://coveralls.io/github/IndelibleVI/ts-event-dispatcher?branch=master)
+![Version](https://img.shields.io/npm/v/@foxandfly/ts-event-dispatcher)
+![CI](https://github.com/FoxAndFly/ts-event-dispatcher/workflows/CI/badge.svg?branch=master)
+![Size](https://img.shields.io/bundlephobia/min/@foxandfly/ts-event-dispatcher)
+![License](https://img.shields.io/github/license/foxandfly/ts-event-dispatcher)
+[![Coverage](https://coveralls.io/repos/github/FoxAndFly/ts-event-dispatcher/badge.svg?branch=master)](https://coveralls.io/github/FoxAndFly/ts-event-dispatcher?branch=master)
 
 This is a simple library that allows your application components to communicate
 with each other by dispatching events and listening to them.
@@ -13,7 +13,7 @@ with each other by dispatching events and listening to them.
 ## Installation
 
 ```
-npm i @indelible-vi/ts-event-dispatcher
+npm i @foxandfly/ts-event-dispatcher
 ```
 
 
@@ -31,7 +31,7 @@ application. It maintains a registry of listeners. When an event is dispatched
 via the dispatcher, it notifies all listeners registered with that event.
 
 ```ts
-import { EventDispatcher } from '@indelible-vi/ts-event-dispatcher'
+import { EventDispatcher } from '@foxandfly/ts-event-dispatcher'
 
 const dispatcher = new EventDispatcher()
 ```
@@ -94,7 +94,7 @@ console.log(context.isPropagationStopped)
 ## Full Example
 
 ```ts
-import { EventDispatcher } from '@indelible-vi/ts-event-dispatcher'
+import { EventDispatcher } from '@foxandfly/ts-event-dispatcher'
 
 const dispatcher = new EventDispatcher()
 
@@ -114,7 +114,7 @@ dispatcher.dispatch('user.created', { user })
 ## TypeScript Example
 
 ```ts
-import { EventDispatcher } from '@indelible-vi/ts-event-dispatcher'
+import { EventDispatcher } from '@foxandfly/ts-event-dispatcher'
 
 interface User { name: string }
 interface UserEvent { user: User }
