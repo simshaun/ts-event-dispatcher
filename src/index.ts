@@ -1,20 +1,55 @@
-export type EventKey = string
-export type EventListener = (data: object, context: EventDispatcherContext) => void
+/**
+ * Arbitrary string specific to your domain.
+ */
+export type EventName = string
 
-type ListenerTuple = [number, EventListener]
-type ListenerMap = Map<EventKey, ListenerTuple[]>
-type OrderedListenerMap = Map<EventKey, EventListener[]>
+/**
+ * Arbitrary object specific to your domain.
+ */
+export type EventData = object
 
-export interface EventDispatcher {
-  dispatch(eventKey: EventKey, eventData: object): void
-  addListener(eventKey: EventKey, listener: EventListener, priority: number): void
+/**
+ * The EventDispatcher expects listeners to match this signature.
+ */
+export type EventListener<TEventName extends EventName, TEventData extends EventData> = (
+  data: TEventData,
+  context: EventDispatcherContext<TEventName>
+) => void
+
+// Reason for jsdoc @type: https://github.com/microsoft/TypeScript/issues/1778#issuecomment-383334526
+
+/**
+ * A map of event names and expected data types.
+ * @type {Object.<EventName, EventData>}
+ */
+export interface EventOverview {
+  [key: string]: EventData
 }
 
-export class EventDispatcherContext {
-  public readonly eventName: EventKey
+type ListenerTuple = [number, EventListener<EventName, EventData>]
+type ListenerMap = Map<EventName, ListenerTuple[]>
+type OrderedListenerMap = Map<EventName, EventListener<EventName, EventData>[]>
+
+export interface EventDispatcher<TEventOverview extends EventOverview> {
+  dispatch<TEventName extends Extract<keyof TEventOverview, string>>(
+    eventName: TEventName,
+    eventData: TEventOverview[TEventName]
+  ): EventDispatcherContext<TEventName>
+  addListener<TEventName extends Extract<keyof TEventOverview, string>>(
+    eventName: TEventName,
+    listener: EventListener<TEventName, TEventOverview[TEventName]>,
+    priority: number
+  ): void
+}
+
+/**
+ * When an event is dispatched, the dispatcher passes an instance of this class to the listeners.
+ */
+export class EventDispatcherContext<TEventName extends EventName> {
+  public readonly eventName: TEventName
   public isPropagationStopped: boolean = false
 
-  constructor(eventName: EventKey) {
+  constructor(eventName: TEventName) {
     this.eventName = eventName
   }
 
@@ -23,13 +58,16 @@ export class EventDispatcherContext {
   }
 }
 
-export class EventDispatcher implements EventDispatcher {
+export class EventDispatcher<TEventOverview extends EventOverview> implements EventDispatcher<TEventOverview> {
   private listeners: ListenerMap = new Map()
   private orderedListeners: OrderedListenerMap = new Map() // a cache
 
-  public dispatch(eventKey: EventKey, eventData: object): EventDispatcherContext {
-    const listeners = this.getListeners(eventKey)
-    const context = new EventDispatcherContext(eventKey)
+  public dispatch<TEventName extends Extract<keyof TEventOverview, string>>(
+    eventName: TEventName,
+    eventData: TEventOverview[TEventName] & { [key: string]: any }
+  ): EventDispatcherContext<TEventName> {
+    const listeners = this.getListeners(eventName)
+    const context = new EventDispatcherContext<TEventName>(eventName)
 
     for (const listener of listeners) {
       listener(eventData, context)
@@ -45,16 +83,20 @@ export class EventDispatcher implements EventDispatcher {
    * Greater priority-number listeners are called first.
    * Listeners with the same priority are called in the order they were registered.
    */
-  public addListener(eventKey: EventKey, listener: EventListener, priority: number = 0) {
-    const tuples: ListenerTuple[] = this.listeners.get(eventKey) || []
-    tuples.push([priority, listener])
-    this.listeners.set(eventKey, tuples)
+  public addListener<TEventName extends Extract<keyof TEventOverview, string>>(
+    eventName: TEventName,
+    listener: EventListener<TEventName, TEventOverview[TEventName]>,
+    priority: number = 0
+  ) {
+    const tuples: ListenerTuple[] = this.listeners.get(eventName) || []
+    tuples.push([priority, listener as EventListener<EventName, EventData>])
+    this.listeners.set(eventName, tuples)
     // Reset the cache:
-    this.orderedListeners.delete(eventKey)
+    this.orderedListeners.delete(eventName)
   }
 
-  private getOrderedListeners(eventKey: EventKey): EventListener[] {
-    const tuples: ListenerTuple[] = this.listeners.get(eventKey) || []
+  private getOrderedListeners(eventName: EventName): EventListener<EventName, EventData>[] {
+    const tuples: ListenerTuple[] = this.listeners.get(eventName) || []
     return tuples
       .sort((a, b) => {
         if (a[0] > b[0]) {
@@ -68,14 +110,18 @@ export class EventDispatcher implements EventDispatcher {
       .map(t => t[1])
   }
 
-  private getListeners(eventKey: EventKey): EventListener[] {
-    if (this.orderedListeners.has(eventKey)) {
-      // forced type is hacky, but is easiest way I found to make TypeScript be quiet.
-      return this.orderedListeners.get(eventKey) as EventListener[]
+  private getListeners(eventName: EventName): EventListener<EventName, EventData>[] {
+    if (this.orderedListeners.has(eventName)) {
+      // https://github.com/microsoft/TypeScript/issues/13086
+      // Can't just inline return because TypeScript doesn't recognize the `has` condition as a type-guard.
+      const listeners = this.orderedListeners.get(eventName)
+      if (listeners) {
+        return listeners
+      }
     }
 
-    const orderedListeners = this.getOrderedListeners(eventKey)
-    this.orderedListeners.set(eventKey, orderedListeners)
+    const orderedListeners = this.getOrderedListeners(eventName)
+    this.orderedListeners.set(eventName, orderedListeners)
     return orderedListeners
   }
 }
