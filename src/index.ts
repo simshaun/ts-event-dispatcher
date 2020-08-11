@@ -113,11 +113,8 @@ export class EventDispatcher<TEventOverview extends EventOverview> implements Ev
   private getListeners(eventName: EventName): EventListener<EventName, EventData>[] {
     if (this.orderedListeners.has(eventName)) {
       // https://github.com/microsoft/TypeScript/issues/13086
-      // Can't just inline return because TypeScript doesn't recognize the `has` condition as a type-guard.
-      const listeners = this.orderedListeners.get(eventName)
-      if (listeners) {
-        return listeners
-      }
+      // Force type since TypeScript doesn't recognize the `has` condition as a type-guard.
+      return this.orderedListeners.get(eventName) as EventListener<EventName, EventData>[]
     }
 
     const orderedListeners = this.getOrderedListeners(eventName)
