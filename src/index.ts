@@ -32,12 +32,16 @@ type OrderedListenerMap = Map<EventName, EventListener<EventName, EventData>[]>
 
 export interface EventDispatcher<TEventOverview extends EventOverview> {
   dispatch<TEventName extends Extract<keyof TEventOverview, string>>(
-    eventName: TEventName,
-    eventData: TEventOverview[TEventName]
+    // `| string` allows non-registered events
+    eventName: TEventName | string,
+    // `| any` allows non-registered events
+    eventData: TEventOverview[TEventName] | any
   ): EventDispatcherContext<TEventName>
   addListener<TEventName extends Extract<keyof TEventOverview, string>>(
-    eventName: TEventName,
-    listener: EventListener<TEventName, TEventOverview[TEventName]>,
+    // `| string` allows non-registered events
+    eventName: TEventName | string,
+    // `| any` allows non-registered events
+    listener: EventListener<TEventName, TEventOverview[TEventName] | any>,
     priority?: number
   ): void
 }

@@ -90,6 +90,26 @@ describe('EventDispatcher', () => {
     expect(context).toHaveProperty('eventName')
     expect(context.eventName).toBe('fake_event')
   })
+
+  // This isn't really a test. It's just here to glance at in the IDE and make sure there's no TS issues.
+  test('it allows type-unsafe "non-registered" events', () => {
+    interface RegisteredEvent {
+      listeners: number
+    }
+    interface NonRegisteredEvent {
+      foo: boolean
+    }
+    const dispatcher = new EventDispatcher<{ registered_event: RegisteredEvent }>()
+    dispatcher.addListener('registered_event', data => {
+      // No TS errors? Cool!
+    })
+    dispatcher.addListener('nonregistered_event', (data: NonRegisteredEvent) => {
+      // No TS errors? Cool!
+    })
+    dispatcher.dispatch('registered_event', { listeners: 5 })
+    dispatcher.dispatch('nonregistered_event', { foo: false } as NonRegisteredEvent)
+    // Still no TS errors? Great!
+  })
 })
 
 describe('EventDispatcherContext', () => {
