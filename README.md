@@ -36,6 +36,7 @@ import { EventDispatcher } from '@foxandfly/ts-event-dispatcher'
 const dispatcher = new EventDispatcher()
 ```
 
+
 ### Dispatching an Event
 
 Suppose you want to trigger an event when a user signs up on your website.
@@ -45,6 +46,7 @@ pass a User object to the listeners.
 ```ts
 dispatcher.dispatch('user.created', { user, timestamp: 12345 })
 ```
+
 
 ### Event Listeners
 
@@ -68,6 +70,20 @@ The `addListener()` method takes two or three arguments:
    added to the dispatcher.
 
 
+### Async Event Listeners
+
+Event listeners can be asynchronous. The dispatcher will call listeners
+in the intended order and await each one.
+
+```ts
+dispatcher.addListener('user.created', async ({ user }) => {
+  await post('http://an-important-service', { user })
+})
+
+await dispatcher.dispatch('user.created', { user })
+```
+
+
 ### Stopping Event Propagation
 
 Sometimes it may make sense for a listener to prevent the next listeners from
@@ -87,7 +103,7 @@ If you need to detect if propagation is stopped, the dispatcher returns the
 context object from `dispatch()`.
 
 ```ts
-const context = dispatcher.dispatch('user.created', data)
+const context = await dispatcher.dispatch('user.created', data)
 console.log(context.isPropagationStopped)
 ```
 

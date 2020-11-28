@@ -14,7 +14,7 @@ export type EventData = object
 export type EventListener<TEventName extends EventName, TEventData extends EventData> = (
   data: TEventData,
   context: EventDispatcherContext<TEventName>
-) => void
+) => Promise<unknown> | void
 
 // Reason for jsdoc @type: https://github.com/microsoft/TypeScript/issues/1778#issuecomment-383334526
 
@@ -36,7 +36,7 @@ export interface EventDispatcher<TEventOverview extends EventOverview> {
     eventName: TEventName | string,
     // `| any` allows non-registered events
     eventData: TEventOverview[TEventName] | any
-  ): EventDispatcherContext<TEventName>
+  ): Promise<EventDispatcherContext<TEventName>>
   addListener<TEventName extends Extract<keyof TEventOverview, string>>(
     // `| string` allows non-registered events
     eventName: TEventName | string,
@@ -66,15 +66,15 @@ export class EventDispatcher<TEventOverview extends EventOverview> implements Ev
   private listeners: ListenerMap = new Map()
   private orderedListeners: OrderedListenerMap = new Map() // a cache
 
-  public dispatch<TEventName extends Extract<keyof TEventOverview, string>>(
+  public async dispatch<TEventName extends Extract<keyof TEventOverview, string>>(
     eventName: TEventName,
     eventData: TEventOverview[TEventName] & { [key: string]: any }
-  ): EventDispatcherContext<TEventName> {
+  ): Promise<EventDispatcherContext<TEventName>> {
     const listeners = this.getListeners(eventName)
     const context = new EventDispatcherContext<TEventName>(eventName)
 
     for (const listener of listeners) {
-      listener(eventData, context)
+      await listener(eventData, context)
       if (context.isPropagationStopped) {
         return context
       }
