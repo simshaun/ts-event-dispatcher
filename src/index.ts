@@ -38,7 +38,7 @@ export interface EventDispatcher<TEventOverview extends EventOverview> {
   addListener<TEventName extends Extract<keyof TEventOverview, string>>(
     eventName: TEventName,
     listener: EventListener<TEventName, TEventOverview[TEventName]>,
-    priority: number
+    priority?: number
   ): void
 }
 
