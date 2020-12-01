@@ -39,7 +39,7 @@
   "peerDependencies": {},
   "husky": {
     "hooks": {
-      "pre-commit": "tsdx lint"
+      "pre-commit": "tsdx lint && node git-hook_verify-package-version-bump.js"
     }
   },
   "prettier": {
@@ -50,6 +50,7 @@
   },
   "devDependencies": {
     "auto": "^9.61.0",
+    "execa": "^4.1.0",
     "husky": "^4.3.0",
     "jest-extended": "^0.11.5",
     "tsdx": "^0.13.3",
