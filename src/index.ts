@@ -1,3 +1,6 @@
+// See test/autocompletion-spotcheck.ts for reason behind LiteralUnion
+import { LiteralUnion } from 'type-fest'
+
 /**
  * Arbitrary string specific to your domain.
  */
@@ -32,16 +35,24 @@ type OrderedListenerMap = Map<EventName, EventListener<EventName, EventData>[]>
 
 export interface EventDispatcher<TEventOverview extends EventOverview> {
   dispatch<TEventName extends Extract<keyof TEventOverview, string>>(
-    // `| string` allows non-registered events
-    eventName: TEventName | string,
-    // `| any` allows non-registered events
-    eventData: TEventOverview[TEventName] | any
+    eventName: TEventName,
+    eventData: TEventOverview[TEventName]
   ): Promise<EventDispatcherContext<TEventName>>
+
+  dispatch<TEventName extends string>(
+    eventName: Exclude<TEventName, keyof TEventOverview>,
+    eventData: any
+  ): Promise<EventDispatcherContext<TEventName>>
+
   addListener<TEventName extends Extract<keyof TEventOverview, string>>(
-    // `| string` allows non-registered events
-    eventName: TEventName | string,
-    // `| any` allows non-registered events
-    listener: EventListener<TEventName, TEventOverview[TEventName] | any>,
+    eventName: TEventName,
+    listener: EventListener<TEventName, TEventOverview[TEventName]>,
+    priority?: number
+  ): void
+
+  addListener<TEventName extends string>(
+    eventName: Exclude<TEventName, keyof TEventOverview>,
+    listener: EventListener<Exclude<TEventName, keyof TEventOverview>, any>,
     priority?: number
   ): void
 }
@@ -68,10 +79,12 @@ export class EventDispatcher<TEventOverview extends EventOverview> implements Ev
 
   public async dispatch<TEventName extends Extract<keyof TEventOverview, string>>(
     eventName: TEventName,
-    eventData: TEventOverview[TEventName] & { [key: string]: any }
-  ): Promise<EventDispatcherContext<TEventName>> {
+    eventData: TEventOverview[TEventName]
+  ): Promise<EventDispatcherContext<TEventName>>
+
+  public async dispatch<TEventName extends EventName>(eventName: TEventName, eventData: any): Promise<EventDispatcherContext<TEventName>> {
     const listeners = this.getListeners(eventName)
-    const context = new EventDispatcherContext<TEventName>(eventName)
+    const context = new EventDispatcherContext<TEventName>(eventName as TEventName)
 
     for (const listener of listeners) {
       await listener(eventData, context)
@@ -88,7 +101,7 @@ export class EventDispatcher<TEventOverview extends EventOverview> implements Ev
    * Listeners with the same priority are called in the order they were registered.
    */
   public addListener<TEventName extends Extract<keyof TEventOverview, string>>(
-    eventName: TEventName,
+    eventName: LiteralUnion<TEventName, string>,
     listener: EventListener<TEventName, TEventOverview[TEventName]>,
     priority: number = 0
   ) {
