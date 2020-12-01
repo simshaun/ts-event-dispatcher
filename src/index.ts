@@ -9,9 +9,25 @@ export type EventName = string
 export type EventData = object
 
 /**
- * The EventDispatcher expects listeners to match this signature.
+ * Passed to event listeners as an argument when dispatching an event.
  */
-export type EventListener<TEventName extends EventName, TEventData extends EventData> = (
+export class EventDispatcherContext<TEventName> {
+  public readonly eventName: TEventName
+  public isPropagationStopped: boolean = false
+
+  constructor(eventName: TEventName) {
+    this.eventName = eventName
+  }
+
+  public stopPropagation(): void {
+    this.isPropagationStopped = true
+  }
+}
+
+/**
+ * Listeners should match this signature.
+ */
+export type EventListener<TEventName, TEventData> = (
   data: TEventData,
   context: EventDispatcherContext<TEventName>
 ) => Promise<unknown> | void
@@ -19,7 +35,7 @@ export type EventListener<TEventName extends EventName, TEventData extends Event
 // Reason for jsdoc @type: https://github.com/microsoft/TypeScript/issues/1778#issuecomment-383334526
 
 /**
- * A map of event names and expected data types.
+ * A map of event names and types of expected data.
  * @type {Object.<EventName, EventData>}
  */
 export interface EventOverview {
@@ -52,22 +68,6 @@ export interface EventDispatcher<TEventOverview extends EventOverview> {
     listener: EventListener<Exclude<TEventName, keyof TEventOverview>, any>,
     priority?: number
   ): void
-}
-
-/**
- * When an event is dispatched, the dispatcher passes an instance of this class to the listeners.
- */
-export class EventDispatcherContext<TEventName extends EventName> {
-  public readonly eventName: TEventName
-  public isPropagationStopped: boolean = false
-
-  constructor(eventName: TEventName) {
-    this.eventName = eventName
-  }
-
-  public stopPropagation(): void {
-    this.isPropagationStopped = true
-  }
 }
 
 export class EventDispatcher<TEventOverview extends EventOverview> implements EventDispatcher<TEventOverview> {
@@ -107,6 +107,18 @@ export class EventDispatcher<TEventOverview extends EventOverview> implements Ev
     this.orderedListeners.delete(eventName)
   }
 
+  private getListeners(eventName: EventName): EventListener<EventName, EventData>[] {
+    if (this.orderedListeners.has(eventName)) {
+      // Forced type because TypeScript doesn't recognize the previous `has` condition as a type-guard.
+      // @see https://github.com/microsoft/TypeScript/issues/13086
+      return this.orderedListeners.get(eventName) as EventListener<EventName, EventData>[]
+    }
+
+    const orderedListeners = this.getOrderedListeners(eventName)
+    this.orderedListeners.set(eventName, orderedListeners)
+    return orderedListeners
+  }
+
   private getOrderedListeners(eventName: EventName): EventListener<EventName, EventData>[] {
     const tuples: ListenerTuple[] = this.listeners.get(eventName) || []
     return tuples
@@ -120,17 +132,5 @@ export class EventDispatcher<TEventOverview extends EventOverview> implements Ev
         return 0
       })
       .map(t => t[1])
-  }
-
-  private getListeners(eventName: EventName): EventListener<EventName, EventData>[] {
-    if (this.orderedListeners.has(eventName)) {
-      // https://github.com/microsoft/TypeScript/issues/13086
-      // Force type since TypeScript doesn't recognize the `has` condition as a type-guard.
-      return this.orderedListeners.get(eventName) as EventListener<EventName, EventData>[]
-    }
-
-    const orderedListeners = this.getOrderedListeners(eventName)
-    this.orderedListeners.set(eventName, orderedListeners)
-    return orderedListeners
   }
 }
