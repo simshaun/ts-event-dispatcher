@@ -1,7 +1,7 @@
 {
   "name": "@foxandfly/ts-event-dispatcher",
   "description": "A simple JS event dispatcher implementing the mediator & observer patterns",
-  "version": "2.1.4",
+  "version": "2.1.5",
   "license": "MIT",
   "author": "Shaun Simmons",
   "repository": {
