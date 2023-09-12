@@ -2,7 +2,6 @@
 
 ![Version](https://img.shields.io/npm/v/@foxandfly/ts-event-dispatcher)
 ![CI](https://github.com/FoxAndFly/ts-event-dispatcher/workflows/CI/badge.svg?branch=master)
-![Size](https://img.shields.io/bundlephobia/min/@foxandfly/ts-event-dispatcher)
 ![License](https://img.shields.io/github/license/foxandfly/ts-event-dispatcher)
 [![Coverage](https://coveralls.io/repos/github/FoxAndFly/ts-event-dispatcher/badge.svg?branch=master)](https://coveralls.io/github/FoxAndFly/ts-event-dispatcher?branch=master)
 
