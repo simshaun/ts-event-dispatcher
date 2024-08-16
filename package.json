@@ -1,17 +1,17 @@
 {
-  "name": "@foxandfly/ts-event-dispatcher",
+  "name": "@libshaun/ts-event-dispatcher",
   "description": "A simple JS event dispatcher implementing the mediator & observer patterns",
-  "version": "2.1.5",
+  "version": "2.1.6",
   "license": "MIT",
   "author": "Shaun Simmons",
   "repository": {
     "type": "git",
-    "url": "https://github.com/FoxAndFly/ts-event-dispatcher.git"
+    "url": "https://github.com/simshaun/ts-event-dispatcher.git"
   },
   "bugs": {
-    "url": "https://github.com/FoxAndFly/ts-event-dispatcher/issues"
+    "url": "https://github.com/simshaun/ts-event-dispatcher/issues"
   },
-  "homepage": "https://github.com/FoxAndFly/ts-event-dispatcher",
+  "homepage": "https://github.com/simshaun/ts-event-dispatcher",
   "keywords": [
     "typescript",
     "event dispatcher",

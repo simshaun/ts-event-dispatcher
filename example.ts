@@ -1,4 +1,4 @@
-import { EventDispatcher, EventListener } from '@foxandfly/ts-event-dispatcher'
+import { EventDispatcher, EventListener } from '@libshaun/ts-event-dispatcher'
 
 const dispatcher = new EventDispatcher()
 
